@@ -1,0 +1,11 @@
+{
+  "name": "tradevision-pro-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TradeVision Pro AI - Institutional-Grade Chart Analysis",
+  "scripts": {
+    "dev": "cd backend && node --watch server.js",
+    "start": "cd backend && node server.js",
+    "install:backend": "cd backend && npm install"
+  }
+}
