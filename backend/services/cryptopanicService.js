@@ -35,15 +35,14 @@ async function cryptopanicRequest(endpoint, params = {}) {
     const statusCode = error.response?.status || 500;
     const errorMsg = error.response?.data?.error || error.message;
 
-    logger.error(`CryptoPanic API error: ${endpoint}`, {
+    logger.warn(`CryptoPanic API error (non-fatal): ${endpoint}`, {
       statusCode,
       error: errorMsg,
       params,
     });
 
-    throw Object.assign(new Error(`CryptoPanic API error: ${errorMsg}`), {
-      statusCode,
-    });
+    // Return empty result set instead of throwing — makes CryptoPanic optional
+    return { count: 0, results: [] };
   }
 }
 

@@ -10,7 +10,7 @@
 (function () {
   "use strict";
 
-  const API_BASE_URL = "http://localhost:3001/api";
+  const API_BASE_URL = "https://vision-pro-v2-0.onrender.com/api";
 
   /**
    * Generic fetch wrapper for backend API calls.
