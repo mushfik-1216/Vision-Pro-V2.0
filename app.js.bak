@@ -2,28 +2,7 @@
    TradeVision Pro AI — Application Engine
    ================================================================ */
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // ── Backend Connection Check on Startup ──────────────────────
-  if (window.TradeVisionAPI) {
-    console.log("[TradeVision] Checking backend connection...");
-    const result = await window.TradeVisionAPI.checkConnection();
-    if (result.connected) {
-      console.log(
-        `%c[TradeVision] ✅ Backend Connected — ${result.data.status || "online"}`,
-        "color: #00ff88; font-weight: bold",
-      );
-    } else {
-      console.warn(
-        `%c[TradeVision] ❌ Backend Not Connected — ${result.error}`,
-        "color: #ff4444; font-weight: bold",
-      );
-      console.warn(
-        `[TradeVision] The app will use local fallback analysis. API features require the backend server.`,
-      );
-    }
-  } else {
-    console.warn("[TradeVision] TradeVisionAPI not loaded.");
-  }
+document.addEventListener("DOMContentLoaded", () => {
   // ---- DOM References ----
   const uploadContainer = document.getElementById("uploadContainer");
   const fileInput = document.getElementById("fileInput");

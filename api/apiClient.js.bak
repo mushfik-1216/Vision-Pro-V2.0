@@ -5,72 +5,12 @@
  * NO API keys are stored here — all secrets are server-side.
  *
  * Exposed as window.TradeVisionAPI
- *
- * Configuration:
- *   Production: https://vision-pro-v2-0.onrender.com/api
- *   Development: http://localhost:3001/api
  */
 
 (function () {
   "use strict";
 
-  // ── Centralized API Configuration ─────────────────────────
-  const CONFIG = {
-    production: {
-      baseURL: "https://vision-pro-v2-0.onrender.com/api",
-      healthURL: "https://vision-pro-v2-0.onrender.com/health",
-    },
-    development: {
-      baseURL: "http://localhost:3001/api",
-      healthURL: "http://localhost:3001/health",
-    },
-  };
-
-  // Auto-detect environment: GitHub Pages → production, otherwise → development
-  const isGitHubPages =
-    window.location.hostname === "mushfik-1216.github.io" ||
-    window.location.hostname.endsWith(".github.io");
-  const env = isGitHubPages ? "production" : "development";
-
-  const API_BASE_URL = CONFIG[env].baseURL;
-  const HEALTH_URL = CONFIG[env].healthURL;
-
-  console.log(
-    `[TradeVisionAPI] Environment: ${env}`,
-    `| API URL: ${API_BASE_URL}`,
-    `| Health URL: ${HEALTH_URL}`,
-  );
-
-  /**
-   * Check backend connection health.
-   * GET /health — root health endpoint.
-   * @returns {Promise<object>} { success, status, ... }
-   */
-  async function checkConnection() {
-    try {
-      const response = await fetch(HEALTH_URL, {
-        method: "GET",
-        headers: { Accept: "application/json" },
-        signal: AbortSignal.timeout(5000),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log(
-        `[TradeVisionAPI] Backend health check passed:`,
-        data.status || data,
-      );
-      return { connected: true, data };
-    } catch (error) {
-      console.warn(
-        `[TradeVisionAPI] Backend health check failed: ${error.message}`,
-      );
-      return { connected: false, error: error.message };
-    }
-  }
+  const API_BASE_URL = "https://vision-pro-v2-0.onrender.com/api";
 
   /**
    * Generic fetch wrapper for backend API calls.
@@ -110,10 +50,6 @@
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      console.log(
-        `[TradeVisionAPI] ${method} ${url.toString()}`,
-        body ? { body } : "",
-      );
       const response = await fetch(url.toString(), fetchOptions);
       clearTimeout(timeoutId);
 
@@ -129,11 +65,9 @@
       if (!response.ok) {
         const errorMsg =
           responseData?.error || `Server error (HTTP ${response.status})`;
-        console.error(`[TradeVisionAPI] API error: ${errorMsg}`);
         throw new Error(errorMsg);
       }
 
-      console.log(`[TradeVisionAPI] Response OK:`, responseData);
       return responseData;
     } catch (error) {
       clearTimeout(timeoutId);
@@ -144,7 +78,7 @@
 
       if (error.message === "Failed to fetch") {
         throw new Error(
-          "Backend API unavailable. Cannot connect to the analysis server. Make sure the backend is running.",
+          "Cannot connect to the analysis server. Make sure the backend is running on port 3001.",
         );
       }
 
@@ -255,18 +189,13 @@
 
   window.TradeVisionAPI = {
     client: apiClient,
-    checkConnection,
     market: marketApi,
     news: newsApi,
     analysis: analysisApi,
-    config: {
-      env,
-      baseURL: API_BASE_URL,
-      healthURL: HEALTH_URL,
-    },
   };
 
   console.log(
-    `[TradeVisionAPI] Frontend API client loaded. Backend URL: ${API_BASE_URL}`,
+    "[TradeVisionAPI] Frontend API client loaded. Backend URL:",
+    API_BASE_URL,
   );
 })();
